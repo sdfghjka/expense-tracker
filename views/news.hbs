@@ -1,0 +1,33 @@
+{{#> layout}}
+<div class="card p-4">
+    {{> messages}}
+    <h2 class="mb-4">請輸入你的支出</h2>
+    <form action="/create" method="POST">
+        <div class="mb-3">
+            <label class="form-label">名稱：</label>
+            <input type="text" name="name" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">日期：</label>
+            <input type="date" name="date" class="form-control" value="2019-04-23">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">類別：</label>
+            <select name="category" class="form-select">
+                <option value="food">餐飲</option>
+                <option value="transport">交通</option>
+                <option value="shopping">購物</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">金額：</label>
+            <input type="number" name="amount" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">新增支出</button>
+    </form>
+</div>
+{{/layout}}

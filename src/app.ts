@@ -1,49 +1,39 @@
 import express, { Application, Request, Response, Router } from 'express';
-import { engine } from 'express-handlebars';  
-import { DataSource } from 'typeorm';
+import { engine } from 'express-handlebars';
 import mainRouter from './routers';
+import dotenv from 'dotenv';
+import { DbMysql, connectDatabase } from './data-source';
+import session from 'express-session';
+import flash from 'connect-flash';
+import messageHandler from './middlewares/message-handler';
+dotenv.config();
 const app: Application = express();
+const sessionSecret = process.env.SESSION_SECRET || 'default-secret'; 
 //
 app.engine(".hbs", engine({ extname: ".hbs" }));
 app.set("view engine", ".hbs");
 app.set("views", "./views");
 
-
-//
-const AppDataSource = new DataSource({
-    type: "mysql",
-    host: "localhost",
-    port: 3306,
-    username: "root",
-    password: "password",
-    database: "tutor",
-    synchronize: true,
-    logging: true,
-    entities: [], 
-})
-
-AppDataSource.initialize()
-    .then(() => {
-        console.log("Data Source has been initialized!")
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization", err)
-    })
-    //
-
-
+app.use(session({
+    secret: sessionSecret,
+    resave: false, 
+    saveUninitialized: false
+}))
+app.use(flash());
 
 app.use(express.static("public"));
 
+app.use(messageHandler)
 
 app.use(mainRouter);
 
-app.get('/users/signup', (req: Request, res: Response) => {
-    res.render('users/signup'); 
-});
-app.get('/users/login', (req: Request,res: Response)=>{
-    res.render('users/login')
-})
-app.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000/');
+async function initDbMysql() {
+    await DbMysql.initialize();
+    console.log('-> Database mysql connection established');
+}
+connectDatabase().then(() => {
+    app.listen(3000, () => {
+        console.log('Server is running on http://localhost:3000/');
+    });
+
 });
