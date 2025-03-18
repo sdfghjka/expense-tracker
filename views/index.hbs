@@ -1,1 +1,36 @@
-<h1>Hello, Handlebars!</h1>
+{{#> layout}}
+<div class="index-page">
+    {{> messages}}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <select class="form-select w-auto">
+            <option value="all">篩選：全部</option>
+        </select>
+        <h2 class="text-danger">總金額：{{totalAmount}}</h2>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>名稱</th>
+                <th>金額</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each expenses}}
+            <tr>
+                <td>{{this.name}}</td>
+                <td>{{this.amount}}</td>
+                <td>
+                    <a href="/edit/{{this.id}}" class="btn btn-sm btn-warning">修改</a>
+                    <a href="/delete/{{this.id}}" class="btn btn-sm btn-danger">刪除</a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <a href="/new" class="btn btn-primary">新增支出</a>
+</div>
+{{/layout}}
+
