@@ -1,13 +1,11 @@
 import express, { Router, Request, Response, NextFunction } from "express";
-import restaurantController from "../controllers/restaurant-controller";
+import expensesController from "../controllers/expenses-controller";
+import userRouter from "./modules/user";
 const router: Router = Router();
 
-
-router.get('/', restaurantController.getRestaurants);
-router.get('/new',(req: Request, res: Response, next: NextFunction)=>{
-    req.flash('success_msg','seccess')
-    return res.render('news')
-})
-
+router.use('/user',userRouter);
+router.get('/new', expensesController.getNewExpenses)
+router.post('/create', expensesController.createExpenses);
+router.get('/', expensesController.getExpenses);
 export default router;
 

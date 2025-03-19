@@ -6,19 +6,23 @@ import { DbMysql, connectDatabase } from './data-source';
 import session from 'express-session';
 import flash from 'connect-flash';
 import messageHandler from './middlewares/message-handler';
+import methodOverride from 'method-override';
+import { ErrorHandler } from './handlers/error-handler';
 dotenv.config();
 const app: Application = express();
-const sessionSecret = process.env.SESSION_SECRET || 'default-secret'; 
+const sessionSecret = process.env.SESSION_SECRET || 'default-secret';
 //
 app.engine(".hbs", engine({ extname: ".hbs" }));
 app.set("view engine", ".hbs");
 app.set("views", "./views");
-
+app.use(methodOverride("_method"));
 app.use(session({
     secret: sessionSecret,
-    resave: false, 
+    resave: false,
     saveUninitialized: false
 }))
+app.use(express.urlencoded({ extended: true }));
+
 app.use(flash());
 
 app.use(express.static("public"));
@@ -26,6 +30,8 @@ app.use(express.static("public"));
 app.use(messageHandler)
 
 app.use(mainRouter);
+
+app.use(ErrorHandler);
 
 async function initDbMysql() {
     await DbMysql.initialize();
